@@ -3,6 +3,10 @@ require("dotenv").config();
 
 const app = express();
 
+app.get("/", (req, res) => {
+  console.log("sdfkasdjkasdjlkasjdasjf");
+});
+
 app.listen(process.env.PORT || 8080, () => {
   console.log(`App is listening on port ${process.env.PORT || 8080}`);
 });
