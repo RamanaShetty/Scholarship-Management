@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Grid, Paper, Avatar, Typography, TextField, Button, Radio, RadioGroup, FormControlLabel, FormControl, Checkbox, Select, MenuItem, InputLabel, FormHelperText } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import {Link, useLocation, useNavigate} from 'react-router-dom'
+
 
 const colleges = [
     "Harvard University",
@@ -16,6 +18,9 @@ const colleges = [
 ];
 
 const Signup = () => {
+
+    const location=useLocation();
+    const navigate=useNavigate()
     const paperStyle = { padding: '20px 30px', width: 400, height: 'auto', margin: "20px auto" };
     const headerStyle = { margin: 0 };
     const avatarStyle = { backgroundColor: '#1bbd7e' };
@@ -47,6 +52,18 @@ const Signup = () => {
         }
         // Add signup logic here
         console.log('Signup data:', formData);
+        if(location.state && location.state.formInstitute) {
+            console.log("hepkfi")
+            navigate('/institutedashboard');
+        }
+        else if(location.state && location.state.formStudent) {
+            console.log("hepkfi")
+            navigate('/studentdashboard');
+        }
+        else if(location.state && location.state.formGovernment) {
+            console.log("hepkfi")
+            navigate('/governementdashboard');
+        }
     };
 
     return (
@@ -101,7 +118,7 @@ const Signup = () => {
                     <Button type='submit' variant='contained' color='primary' style={{ ...marginTop, display: 'block', margin: '10px auto' }}>Sign up</Button>
                 </form>
 
-                <Typography variant='body2' style={{ marginTop: '20px', textAlign: 'center' }}>
+                <Typography variant='body2' style={{ marginTop: '20px', textAlign: 'center' }} component={Link} to='/login' >
                     Already existing user? 
                     <span style={{ cursor: 'pointer', color: 'blue' }} onClick={() => { /* Placeholder for login functionality */ }}>
                         Login
