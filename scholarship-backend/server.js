@@ -1,9 +1,14 @@
 const express = require("express");
 require("dotenv").config();
+const bodyParser = require("body-parser");
 
 const connection = require("./configuration/db.js");
+const router = require("./controller/router.js");
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(router);
 
 app.get("/", (req, res) => {
   console.log("sdfkasdjkasdjlkasjdasjf");
