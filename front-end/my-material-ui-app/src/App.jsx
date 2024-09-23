@@ -7,6 +7,7 @@ import Home from './Components/Home'
 import InstituteDashboard from './Components/InstituteDashboard'
 import StudentDashboard from './Components/StudentDashboard'
 import GovernmentDashboard from './Components/GovernementDashboard';
+// import Test from './Components/Test'
 
 
 function App() {
@@ -22,7 +23,9 @@ function App() {
         <Route path='/governementdashboard' element={<GovernmentDashboard/>} />
       </Routes>
     </Router>
+    
     {/* <StudentDashboard/> */}
+    {/* <Signup/> */}
     </>
   );
 }
