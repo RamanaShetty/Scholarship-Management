@@ -4,15 +4,14 @@ const bodyParser = require("body-parser");
 
 const connection = require("./configuration/db.js");
 const router = require("./controller/router.js");
+const scheduleScholarshipStatusUpdate = require("./schedulers/scholarship.schedular.js");
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(router);
 
-app.get("/", (req, res) => {
-  console.log("sdfkasdjkasdjlkasjdasjf");
-});
+// scheduleScholarshipStatusUpdate();
 
 connection.connect((err) => {
   if (err) {

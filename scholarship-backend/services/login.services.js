@@ -10,29 +10,31 @@ exports.stdLogin = async (req, res, next) => {
       .promise()
       .query("SELECT * FROM students WHERE email=?", [email]);
 
+    console.log(stdFind);
+
     if (stdFind.length === 0) {
       res.status(404).send({ message: "Student not found" });
-    }
+    } else {
+      const isMatch = await compare(password, stdFind[0].password);
+      if (!isMatch) {
+        res.status(401).send({ message: "Password is incorrect" });
+      } else {
+        const token = sign(
+          { id: stdFind[0].student_id, role: "student" },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "1h",
+          }
+        );
 
-    const isMatch = await compare(password, stdFind[0].password);
-    if (!isMatch) {
-      res.status(401).send({ message: "Password is incorrect" });
-    }
-
-    const token = sign(
-      { id: stdFind.student_id, role: "student" },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          maxAge: 3600000,
+        });
+        res.status(200).send({ message: "Login successful" });
       }
-    );
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000,
-    });
-    res.status(200).send({ message: "Login successful" });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Internal Server Error" });
@@ -57,7 +59,7 @@ exports.instLogin = async (req, res, next) => {
           res.status(401).send({ message: "Invalid password" });
         } else {
           const token = sign(
-            { id: instFind.institute_id, role: "institute" },
+            { id: instFind[0].institute_id, role: "institute" },
             process.env.JWT_SECRET,
             {
               expiresIn: "1h",
@@ -76,5 +78,38 @@ exports.instLogin = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Internal Server Error" });
+  }
+};
+
+exports.govLogin = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const [govFind] = await db
+      .promise()
+      .query(`SELECT * FROM admins WHERE email = ?`, [email]);
+    // const isMatch = await compare(password, govFind[0].password);
+    if (password !== govFind[0].password) {
+      res.status(401).send({ message: "Invalid password" });
+    } else {
+      const token = sign(
+        { id: govFind[0].admin_id, role: "government" },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      console.log(token);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 3600000,
+      });
+      res.status(200).send({ message: "Login successful" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(200).send({ message: "Internal Server error" });
   }
 };
