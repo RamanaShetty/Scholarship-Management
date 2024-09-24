@@ -3,6 +3,8 @@ import { Grid, Paper, Avatar, Typography, TextField, Button, Select, MenuItem, I
 import LockIcon from '@mui/icons-material/Lock';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {Link} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const instituteAffiliations = [
     "State University",
@@ -12,10 +14,12 @@ const instituteAffiliations = [
     "Other"
 ];
 
-const InstituteRegistration = () => {
+const InstituteSignUp = () => {
     const paperStyle = { padding: '30px 20px', width: 500, margin: "20px auto" };
     const avatarStyle = { backgroundColor: '#1bbd7e' };
     const leftAlignStyle = { justifyContent: 'flex-start', margin: '8px 0' }; // Added for checkbox alignment
+    const navigate=useNavigate();
+
 
     const [formData, setFormData] = useState({
         instituteName: '',
@@ -65,6 +69,7 @@ const InstituteRegistration = () => {
         if (validate()) {
             console.log('Form Data:', formData);
             // Submit form logic here
+            navigate('/institutedashboard')
         }
     };
 
@@ -261,6 +266,8 @@ const InstituteRegistration = () => {
                         variant="contained" 
                         color="primary" 
                         style={{ marginTop: '20px', display: 'block', margin: 'auto' }}
+                        // component={Link} to='/institutesignup'
+                        onClick={handleSubmit}
                     >
                         Register
                     </Button>
@@ -270,4 +277,4 @@ const InstituteRegistration = () => {
     );
 };
 
-export default InstituteRegistration;
+export default InstituteSignUp;

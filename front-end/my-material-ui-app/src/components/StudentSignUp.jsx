@@ -3,6 +3,7 @@ import { Grid, Paper, Avatar, Typography, TextField, Button, FormControl, InputL
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import {Link} from 'react-router-dom';
 
 const colleges = [
     "Indian Institute of Technology Bombay (IIT Bombay)",
@@ -267,6 +268,7 @@ const Signup = () => {
                             type="submit" 
                             variant="contained" 
                             color="primary"
+                            component={Link} to='/studentdashboard'
                         >
                             Sign Up
                         </Button>

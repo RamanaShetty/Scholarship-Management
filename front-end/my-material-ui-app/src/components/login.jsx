@@ -4,6 +4,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import LoginIcon from '@mui/icons-material/Login';
+import {Link, useLocation,useNavigate} from 'react-router-dom';
+import InstituteSignUp from './InstituteSignUp';
+import StudentSignUp from './StudentSignUp';
 
 const Login = () => {
     const paperStyle = { padding: '30px 20px', width: 300, margin: "20px auto" };
@@ -20,6 +23,11 @@ const Login = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+
+    // used to navigate to that perticular page
+
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const handlePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -59,6 +67,23 @@ const Login = () => {
         if (valid) {
             // Proceed with login logic
             console.log('Form submitted', formData);
+
+
+            //to naviagte to that particular page
+            if(location.state && location.state.formInstitute ) {
+                navigate('/institutedashboard')
+            }
+            else if(location.state && location.state.formStudent ) {
+                navigate('/studentdashboard')
+            }
+            else if(location.state && location.state.formGovernment ) {
+                navigate('/governementdashboard')
+            }
+            else {
+                navigate('/')
+            }
+
+
         } else {
             console.log('Form has errors', newErrors);
         }
@@ -140,9 +165,25 @@ const Login = () => {
                         Login
                     </Button>
 
-                    <Typography variant='body2' style={{ marginTop: '15px', textAlign: 'center' }}>
+                    <Typography variant='body2' style={{ marginTop: '15px', textAlign: 'center' }} state={{formInstitute:location.state&&location.state.formInstitute, 
+                        formStudent:location.state&&location.state.formStudent, 
+                        formGovernment:location.state&&location.state.formGovernment}}>
                         Not Registered Yet?{" "}
-                        <span style={{ cursor: 'pointer', color: 'blue' }} onClick={() => { /* Placeholder for signup logic */ }}>
+                        <span style={{ cursor: 'pointer', color: 'blue' }} onClick={() => { /* Placeholder for signup logic */
+                            if(location.state && location.state.formInstitute ) {
+                                navigate('/institutesignup')
+                            }
+                            else if(location.state && location.state.formStudent ) {
+                                navigate('/studentsignup')
+                            }
+                            // else if(location.state && location.state.formGovernment ) {
+                            //     navigate('/governementdashboard')
+                            // }
+                            // else {
+                            //     navigate('/')
+                            // }
+                
+                         }}>
                             Create an account
                         </span>
                     </Typography>
