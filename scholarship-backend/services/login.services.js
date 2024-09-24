@@ -1,6 +1,7 @@
 const { compare } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require("../configuration/db");
+const { sendEmail } = require("../middleware/mailing.middleware.js");
 
 exports.stdLogin = async (req, res, next) => {
   const { email, password } = req.body;
@@ -98,6 +99,14 @@ exports.govLogin = async (req, res, next) => {
           expiresIn: "1h",
         }
       );
+
+      if (email) {
+        const to = email;
+        const subject = "Registration Successfull";
+        const text = `Hey  admin,\n\n      You have logged in to scholarship management. Happy working.\n\nThank you,\nRamana Gowirshetty. `;
+
+        await sendEmail(to, subject, text);
+      }
 
       console.log(token);
 

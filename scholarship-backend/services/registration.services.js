@@ -1,6 +1,12 @@
 const { hash } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 const db = require("../configuration/db");
+const { sendEmail } = require("../middleware/mailing.middleware.js");
+
+function capitalize(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
 
 exports.studentRegistration = async (req, res, next) => {
   const {
@@ -41,6 +47,16 @@ exports.studentRegistration = async (req, res, next) => {
         institute_code,
       ]
     );
+
+    if (email) {
+      const to = email;
+      const subject = "Registration Successfull";
+      const text = `Hey ${capitalize(
+        name
+      )},\n   You have successfully registered to our website.\n\nThank you,\nRamana Gowirshetty. `;
+
+      await sendEmail(to, subject, text);
+    }
 
     const token = sign(
       { id: result.insertId, role: "student" },
@@ -112,6 +128,16 @@ exports.instituteRegistration = async (req, res, next) => {
         registration_number,
       ]
     );
+
+    if (email) {
+      const to = email;
+      const subject = "Registration Successfull";
+      const text = `Hey ${capitalize(
+        head_of_institution_name
+      )},\n\n      Your esteeemed Institute has successfully registered to our website. Please wait, until your application is approved by the authority. Your registration number is " ${registration_number} ", this is necessary for further logins.\n\nThank you,\nRamana Gowirshetty. `;
+
+      await sendEmail(to, subject, text);
+    }
 
     res.status(201).send({
       registration_number,
