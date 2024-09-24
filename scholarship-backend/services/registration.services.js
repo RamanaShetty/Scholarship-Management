@@ -22,6 +22,7 @@ exports.studentRegistration = async (req, res, next) => {
   } = req.body;
 
   try {
+    console.log("in the the registration");
     const [existingStudent] = await db
       .promise()
       .query("SELECT * FROM students WHERE email = ?", [email]);
