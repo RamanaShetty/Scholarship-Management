@@ -10,8 +10,6 @@ exports.stdLogin = async (req, res, next) => {
       .promise()
       .query("SELECT * FROM students WHERE email=?", [email]);
 
-    console.log(stdFind);
-
     if (stdFind.length === 0) {
       res.status(404).send({ message: "Student not found" });
     } else {
@@ -26,6 +24,8 @@ exports.stdLogin = async (req, res, next) => {
             expiresIn: "1h",
           }
         );
+
+        console.log(token);
 
         res.cookie("token", token, {
           httpOnly: true,
@@ -66,6 +66,7 @@ exports.instLogin = async (req, res, next) => {
             }
           );
 
+          console.log(token);
           res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -87,7 +88,6 @@ exports.govLogin = async (req, res, next) => {
     const [govFind] = await db
       .promise()
       .query(`SELECT * FROM admins WHERE email = ?`, [email]);
-    // const isMatch = await compare(password, govFind[0].password);
     if (password !== govFind[0].password) {
       res.status(401).send({ message: "Invalid password" });
     } else {

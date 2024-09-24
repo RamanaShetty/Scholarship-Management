@@ -1,5 +1,4 @@
 const db = require("../configuration/db.js");
-const cron = require("node-cron");
 
 exports.addition = async (req, res, next) => {
   const {
@@ -37,6 +36,26 @@ exports.addition = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+};
+
+exports.getAvailableScholarships = async (req, res, next) => {
+  try {
+    const [rows] = await db
+      .promise()
+      .query(
+        `SELECT scholarship_id, program_name, description, eligibility, benefits, deadline, required_documents FROM scholarships WHERE status = 'active'`
+      );
+
+    if (rows.length === 0) {
+      return res.status(404).send({ message: "No scholarships available" });
+    }
+
+    console.log(rows);
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching scholarships:", error);
     res.status(500).send({ message: "Internal server error" });
   }
 };

@@ -3,7 +3,17 @@ const { sign } = require("jsonwebtoken");
 const db = require("../configuration/db");
 
 exports.studentRegistration = async (req, res, next) => {
-  const { name, email, password, phone, address, age, GPA } = req.body;
+  const {
+    name,
+    email,
+    password,
+    phone,
+    address,
+    age,
+    GPA,
+    institute_name,
+    institute_code,
+  } = req.body;
 
   try {
     const [existingStudent] = await db
@@ -17,26 +27,33 @@ exports.studentRegistration = async (req, res, next) => {
     const hashedPassword = await hash(password, 10);
 
     const [result] = await db.promise().query(
-      `INSERT INTO Students (name, email, password, phone, address, age, GPA)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [name, email, hashedPassword, phone, address, age, GPA]
+      `INSERT INTO Students (name, email, password, phone, address, age, GPA, institute_name, institute_code)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        name,
+        email,
+        hashedPassword,
+        phone,
+        address,
+        age,
+        GPA,
+        institute_name,
+        institute_code,
+      ]
     );
 
     const token = sign(
       { id: result.insertId, role: "student" },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
-
-    console.log(token);
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 3600000,
     });
+
     res.status(201).json({
       message: "Student registered successfully",
     });
@@ -94,15 +111,6 @@ exports.instituteRegistration = async (req, res, next) => {
         hashedPassword,
         registration_number,
       ]
-    );
-
-    const institute_id = instituteResult.insertId;
-
-    await db.promise().query(
-      `INSERT INTO instituteregistrations (
-      institute_id, submitted_date) VALUES (?, ?);
-      `,
-      [institute_id, currentDate]
     );
 
     res.status(201).send({
