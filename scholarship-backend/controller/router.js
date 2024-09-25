@@ -23,60 +23,91 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+//
+router.post("/api/v1/login", login.loginUser);
+
+//
 router.post("/api/std/v1/registration", registrations.studentRegistration);
-router.post("/api/std/v1/login", login.stdLogin);
 
-router.post("/api/inst/v1/registration", registrations.instituteRegistration);
-router.post("/api/inst/v1/login", login.instLogin);
-
-router.post("/api/gov/v1/login", login.govLogin);
+//
 router.post(
-  "/api/gov/v1/scholarship",
+  "/api/std/v1/submit",
+  upload.single("submittedDocument"),
   tokenAuthentication,
-  scholarship.addition
+  stdApplication.submitApplication
 );
 
+//
 router.get(
   "/api/scholarship/v1",
   tokenAuthentication,
   scholarship.getAvailableScholarships
 );
 
-router.get(
-  "/api/inst/v1/application",
+//
+router.post(
+  "/api/gov/v1/scholarship",
   tokenAuthentication,
-  applicaitons.instApplication
-);
-router.put(
-  "/api/inst/v1/approve",
-  tokenAuthentication,
-  applicaitons.instApprove
-);
-router.delete(
-  "/api/inst/v1/decline",
-  tokenAuthentication,
-  applicaitons.instDecline
+  scholarship.addition
 );
 
+//
+router.get(
+  "/api/std/applications/v1",
+  tokenAuthentication,
+  stdApplication.getApplicationsToStd
+);
+
+//
+router.delete(
+  "/api/scholarship/v1/:id",
+  tokenAuthentication,
+  scholarship.deleteScholarship
+);
+
+//
+router.put(
+  "/api/scholarship/v1/:id",
+  tokenAuthentication,
+  scholarship.updateScholarship
+);
+
+//
 router.get(
   "/api/std/v1/application",
   tokenAuthentication,
-  stdApplication.stdApplication
+  stdApplication.stdApplicationToGov
 );
+//
 router.put(
-  "/api/std/v1/approve",
+  "/api/std/v1/approve/:id",
   tokenAuthentication,
   stdApplication.approveApplication
 );
+//
 router.delete(
-  "/api/std/v1/decline",
+  "/api/std/v1/decline/:id",
   tokenAuthentication,
   stdApplication.deleteApplication
 );
 
-router.post(
-  "/api/std/v1/submit",
-  upload.single("submittedDocument"),
-  stdApplication.submitApplication
-);
+// router.post("/api/inst/v1/registration", registrations.instituteRegistration);
+// router.post("/api/inst/v1/login", login.instLogin);
+
+// router.get(
+//   "/api/inst/v1/application",
+//   tokenAuthentication,
+//   applicaitons.instApplication
+// );
+// router.put(
+//   "/api/inst/v1/approve",
+//   tokenAuthentication,
+//   applicaitons.instApprove
+// );
+// router.delete(
+//   "/api/inst/v1/decline",
+//   tokenAuthentication,
+//   applicaitons.instDecline
+// );
+
 module.exports = router;

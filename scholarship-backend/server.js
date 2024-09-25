@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const path = require("path");
+const cors = require("cors");
 
 const connection = require("./configuration/db.js");
 const router = require("./controller/router.js");
@@ -11,6 +12,11 @@ const app = express();
 
 app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(bodyParser.json());
 app.use(router);
 

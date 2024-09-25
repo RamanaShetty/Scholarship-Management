@@ -22,7 +22,7 @@ exports.studentRegistration = async (req, res, next) => {
   } = req.body;
 
   try {
-    console.log("in the the registration");
+    console.log(req.body);
     const [existingStudent] = await db
       .promise()
       .query("SELECT * FROM students WHERE email = ?", [email]);
@@ -42,22 +42,12 @@ exports.studentRegistration = async (req, res, next) => {
         hashedPassword,
         phone,
         address,
-        age,
-        GPA,
+        Number(age),
+        Number(GPA),
         institute_name,
         institute_code,
       ]
     );
-
-    if (email) {
-      const to = email;
-      const subject = "Registration Successfull";
-      const text = `Hey ${capitalize(
-        name
-      )},\n   You have successfully registered to our website.\n\nThank you,\nRamana Gowirshetty. `;
-
-      await sendEmail(to, subject, text);
-    }
 
     const token = sign(
       { id: result.insertId, role: "student" },
@@ -67,11 +57,12 @@ exports.studentRegistration = async (req, res, next) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 3600000,
+      secure: true,
+      sameSite: "Strict",
     });
 
-    res.status(201).json({
+    res.status(201).send({
+      token,
       message: "Student registered successfully",
     });
   } catch (error) {
@@ -80,72 +71,72 @@ exports.studentRegistration = async (req, res, next) => {
   }
 };
 
-exports.instituteRegistration = async (req, res, next) => {
-  const {
-    institute_name,
-    institute_code,
-    affiliation_details,
-    institute_address,
-    institute_contact,
-    head_of_institution_name,
-    head_of_institution_contact,
-    email,
-    password,
-  } = req.body;
+// exports.instituteRegistration = async (req, res, next) => {
+//   const {
+//     institute_name,
+//     institute_code,
+//     affiliation_details,
+//     institute_address,
+//     institute_contact,
+//     head_of_institution_name,
+//     head_of_institution_contact,
+//     email,
+//     password,
+//   } = req.body;
 
-  try {
-    const [existingStudent] = await db
-      .promise()
-      .query("SELECT * FROM institutes WHERE email = ?", [email]);
+//   try {
+//     const [existingStudent] = await db
+//       .promise()
+//       .query("SELECT * FROM institutes WHERE email = ?", [email]);
 
-    if (existingStudent.length > 0) {
-      return res.status(400).json({ message: "Email is already registered" });
-    }
+//     if (existingStudent.length > 0) {
+//       return res.status(400).json({ message: "Email is already registered" });
+//     }
 
-    const hashedPassword = await hash(password, 10);
+//     const hashedPassword = await hash(password, 10);
 
-    const currentDate = new Date();
-    const dateString = `${currentDate.getFullYear()}`;
-    const randomSuffix = Math.floor(10 + Math.random() * 90);
-    const registration_number = `${institute_code}${dateString}${randomSuffix}`;
+//     const currentDate = new Date();
+//     const dateString = `${currentDate.getFullYear()}`;
+//     const randomSuffix = Math.floor(10 + Math.random() * 90);
+//     const registration_number = `${institute_code}${dateString}${randomSuffix}`;
 
-    const [instituteResult] = await db.promise().query(
-      `INSERT INTO Institutes (
-                  institute_name, institute_code, affiliation_details, 
-                  institute_address, institute_contact, 
-                  head_of_institution_name, head_of_institution_contact,email, 
-                  password, registration_number
-              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        institute_name,
-        institute_code,
-        affiliation_details,
-        institute_address,
-        institute_contact,
-        head_of_institution_name,
-        head_of_institution_contact,
-        email,
-        hashedPassword,
-        registration_number,
-      ]
-    );
+//     const [instituteResult] = await db.promise().query(
+//       `INSERT INTO Institutes (
+//                   institute_name, institute_code, affiliation_details, 
+//                   institute_address, institute_contact, 
+//                   head_of_institution_name, head_of_institution_contact,email, 
+//                   password, registration_number
+//               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+//       [
+//         institute_name,
+//         institute_code,
+//         affiliation_details,
+//         institute_address,
+//         institute_contact,
+//         head_of_institution_name,
+//         head_of_institution_contact,
+//         email,
+//         hashedPassword,
+//         registration_number,
+//       ]
+//     );
 
-    if (email) {
-      const to = email;
-      const subject = "Registration Successfull";
-      const text = `Hey ${capitalize(
-        head_of_institution_name
-      )},\n\n      Your esteeemed Institute has successfully registered to our website. Please wait, until your application is approved by the authority. Your registration number is " ${registration_number} ", this is necessary for further logins.\n\nThank you,\nRamana Gowirshetty. `;
+//     if (email) {
+//       const to = email;
+//       const subject = "Registration Successfull";
+//       const text = `Hey ${capitalize(
+//         head_of_institution_name
+//       )},\n\n      Your esteeemed Institute has successfully registered to our website. Please wait, until your application is approved by the authority. Your registration number is " ${registration_number} ", this is necessary for further logins.\n\nThank you,\nRamana Gowirshetty. `;
 
-      await sendEmail(to, subject, text);
-    }
+//       await sendEmail(to, subject, text);
+//     }
 
-    res.status(201).send({
-      registration_number,
-      message: "Institute registration is in pending",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-};
+//     res.status(201).send({
+//       registration_number,
+//       message: "Institute registration is in pending",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ message: "Internal Server Error" });
+//   }
+// };
