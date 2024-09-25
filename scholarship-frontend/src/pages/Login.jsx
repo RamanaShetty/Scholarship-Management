@@ -15,7 +15,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role: location.state?.role || "student", // Default to student if no role is provided
+    role: location.state?.role || "student",
   });
 
   const navigate = useNavigate();
@@ -138,10 +138,11 @@ const LoginForm = () => {
           >
             Login
           </Button>
-
-          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Not registered yet? <Link to="/register">Register here</Link>
-          </Typography>
+          {location.state?.role === "student" && (
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+              Not registered yet? <Link to="/register">Register here</Link>
+            </Typography>
+          )}
         </Box>
       </Paper>
     </Container>
