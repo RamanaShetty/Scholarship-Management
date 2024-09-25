@@ -6,12 +6,14 @@ import StudentApplications from "./pages/Student/StudentApplications.jsx";
 import ScholarshipDetail from "./components/Student/ScholarshipDetail.jsx";
 import GovernmentPage from "./pages/Government/Government.jsx";
 import StudentGovApplications from "./pages/Government/Applications.jsx";
+import Home from "./pages/Home.jsx";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginForm />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/student" element={<StudentPage />} />
         <Route path="/applications" element={<StudentApplications />} />

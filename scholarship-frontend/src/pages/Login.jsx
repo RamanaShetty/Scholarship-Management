@@ -2,30 +2,29 @@ import React, { useState } from "react";
 import {
   TextField,
   Button,
-  Checkbox,
-  FormControlLabel,
   Typography,
   Box,
   Container,
   Paper,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../styles/login.css";
 
 const LoginForm = () => {
+  const location = useLocation();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    student: false,
-    government: false,
+    role: location.state?.role || "student", // Default to student if no role is provided
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     });
   };
 
@@ -45,7 +44,6 @@ const LoginForm = () => {
       }
 
       const data = await response.json();
-
       const { token, role } = data;
 
       localStorage.setItem("token", token);
@@ -121,32 +119,6 @@ const LoginForm = () => {
             fullWidth
             sx={{ borderRadius: 2 }}
           />
-
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="student"
-                  checked={formData.student}
-                  onChange={handleChange}
-                />
-              }
-              label="Student"
-              sx={{ color: "#1976d2" }}
-            />
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="government"
-                  checked={formData.government}
-                  onChange={handleChange}
-                />
-              }
-              label="Government"
-              sx={{ color: "#1976d2" }}
-            />
-          </Box>
 
           <Button
             type="submit"

@@ -52,7 +52,7 @@ const RegistrationForm = () => {
 
       const data = await response.json();
       console.log("Registration successful:", data);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Error during registration:", error);
     }

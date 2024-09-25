@@ -65,6 +65,7 @@ exports.getApplicationsToStd = async (req, res, next) => {
 
 exports.deleteApplication = async (req, res, next) => {
   const { id } = req.params;
+
   try {
     const [existingApplication] = await db
       .promise()
@@ -74,11 +75,43 @@ exports.deleteApplication = async (req, res, next) => {
       return res.status(404).json({ message: "Application not found" });
     }
 
+    const [studentDetails] = await db
+      .promise()
+      .query("SELECT * FROM Students WHERE student_id = ?", [
+        existingApplication[0].student_id,
+      ]);
+
+    const [scholarshipDetails] = await db
+      .promise()
+      .query("SELECT * FROM Scholarships WHERE scholarship_id = ?", [
+        existingApplication[0].scholarship_id,
+      ]);
+
+    if (!studentDetails.length || !scholarshipDetails.length) {
+      return res.status(404).json({
+        message: "Related student or scholarship not found.",
+      });
+    }
+
+    const email = studentDetails[0].email;
+    const studentName = studentDetails[0].name;
+    const scholarshipName = scholarshipDetails[0].program_name;
+
+    const subject = "Application Declined";
+    const text = `Dear ${studentName},\n\nWe regret to inform you that your application for the ${scholarshipName} scholarship has been declined. We encourage you to explore other opportunities.\n\nBest regards,\nThe Scholarship Team.`;
+
+    if (email) {
+      await sendEmail(email, subject, text);
+    }
+
     await db
       .promise()
       .query("DELETE FROM Applications WHERE application_id = ?", [id]);
 
-    res.status(200).json({ message: "Application deleted successfully" });
+    res.status(200).json({
+      message:
+        "Application has been declined, deleted successfully, and an email has been sent to the student.",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -97,6 +130,24 @@ exports.approveApplication = async (req, res, next) => {
       return res.status(404).json({ message: "Application not found" });
     }
 
+    const [studentDetails] = await db
+      .promise()
+      .query("SELECT * FROM Students WHERE student_id = ?", [
+        existingApplication[0].student_id,
+      ]);
+
+    const [scholarshipDetails] = await db
+      .promise()
+      .query("SELECT * FROM Scholarships WHERE scholarship_id = ?", [
+        existingApplication[0].scholarship_id,
+      ]);
+
+    if (!studentDetails.length || !scholarshipDetails.length) {
+      return res.status(404).json({
+        message: "Related student or scholarship not found.",
+      });
+    }
+
     await db
       .promise()
       .query(
@@ -104,7 +155,21 @@ exports.approveApplication = async (req, res, next) => {
         [id]
       );
 
-    res.status(200).json({ message: "Application approved successfully" });
+    const email = studentDetails[0].email;
+    const studentName = studentDetails[0].name;
+    const scholarshipName = scholarshipDetails[0].program_name;
+
+    const subject = "Application Accepted";
+    const text = `Dear ${studentName},\n\nCongratulations! Your application for the ${scholarshipName} scholarship has been accepted.\n\nWe look forward to supporting your educational journey.\n\nBest regards,\nThe Scholarship Team.`;
+
+    if (email) {
+      sendEmail(email, subject, text);
+    }
+
+    res.status(200).json({
+      message:
+        "Application has been accepted successfully and an email has been sent to the student.",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
