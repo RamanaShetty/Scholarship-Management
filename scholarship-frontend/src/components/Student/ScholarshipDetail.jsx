@@ -187,7 +187,7 @@ const ScholarshipDetail = () => {
                 >
                   Deadline:
                   <CalendarTodayIcon sx={{ fontSize: "15px" }} />{" "}
-                  {scholarship.deadline}
+                  {scholarship.deadline.split("T")[0]}
                 </Typography>
               </Box>
             </CardContent>
