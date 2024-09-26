@@ -46,7 +46,7 @@ exports.loginUser = async (req, res, next) => {
     }
 
     const token = sign({ id: user[idField], role }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "5h",
     });
 
     return res.status(200).send({ token, message: "Login successful", role });

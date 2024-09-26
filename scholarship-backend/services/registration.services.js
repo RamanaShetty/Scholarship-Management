@@ -9,20 +9,9 @@ function capitalize(str) {
 }
 
 exports.studentRegistration = async (req, res, next) => {
-  const {
-    name,
-    email,
-    password,
-    phone,
-    address,
-    age,
-    GPA,
-    institute_name,
-    institute_code,
-  } = req.body;
+  const { name, email, password, age } = req.body;
 
   try {
-    console.log(req.body);
     const [existingStudent] = await db
       .promise()
       .query("SELECT * FROM students WHERE email = ?", [email]);
@@ -34,19 +23,9 @@ exports.studentRegistration = async (req, res, next) => {
     const hashedPassword = await hash(password, 10);
 
     const [result] = await db.promise().query(
-      `INSERT INTO Students (name, email, password, phone, address, age, GPA, institute_name, institute_code)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        name,
-        email,
-        hashedPassword,
-        phone,
-        address,
-        Number(age),
-        Number(GPA),
-        institute_name,
-        institute_code,
-      ]
+      `INSERT INTO Students (name, email, password, age)
+        VALUES (?, ?, ?, ?)`,
+      [name, email, hashedPassword, Number(age)]
     );
 
     const token = sign(
@@ -102,9 +81,9 @@ exports.studentRegistration = async (req, res, next) => {
 
 //     const [instituteResult] = await db.promise().query(
 //       `INSERT INTO Institutes (
-//                   institute_name, institute_code, affiliation_details, 
-//                   institute_address, institute_contact, 
-//                   head_of_institution_name, head_of_institution_contact,email, 
+//                   institute_name, institute_code, affiliation_details,
+//                   institute_address, institute_contact,
+//                   head_of_institution_name, head_of_institution_contact,email,
 //                   password, registration_number
 //               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 //       [

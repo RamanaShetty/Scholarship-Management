@@ -7,7 +7,6 @@ const scholarship = require("../services/scholarship.services.js");
 const {
   tokenAuthentication,
 } = require("../middleware/authentication.middleware.js");
-const applicaitons = require("../services/applications.services.js");
 const stdApplication = require("../services/studentApplicaiton.services.js");
 
 const router = Router({ strict: true });
@@ -21,7 +20,15 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+}).fields([
+  { name: "tenthMemo", maxCount: 1 },
+  { name: "twelthMemo", maxCount: 1 },
+  { name: "incomeCertificate", maxCount: 1 },
+  { name: "casteCertificate", maxCount: 1 },
+  { name: "bonafide", maxCount: 1 },
+]);
 
 //
 router.post("/api/v1/login", login.loginUser);
@@ -32,7 +39,7 @@ router.post("/api/std/v1/registration", registrations.studentRegistration);
 //
 router.post(
   "/api/std/v1/submit",
-  upload.single("submittedDocument"),
+  upload,
   tokenAuthentication,
   stdApplication.submitApplication
 );
