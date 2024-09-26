@@ -20,6 +20,15 @@ export default function Home() {
 
   return (
     <>
+      <style>
+        {`
+      body,html {
+        
+        padding :0;
+        overflow:hidden;
+      }
+    `}
+      </style>
       <AppBar
         position="static"
         sx={{
@@ -41,7 +50,7 @@ export default function Home() {
               <SchoolIcon sx={{ fontSize: "36px", marginRight: 1 }} />
             </IconButton>
             <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold" }}>
-              ePass
+              Gradious Scholarships
             </Typography>
           </Box>
         </Toolbar>
@@ -51,16 +60,16 @@ export default function Home() {
         justifyContent="center"
         alignItems="center"
         sx={{
-          height: "90vh",
-          padding: 2,
+          height: isMobile ? "calc(100vh - 80px)" : "calc(100vh - 60px)",
+          padding: isMobile ? 1 : 2,
           flexDirection: isMobile ? "column" : "row",
+          overflow: "hidden",
         }}
-        gap={6}
+        gap={isMobile ? 4 : 16}
+        md={isMobile ? 0 : 2}
       >
         <Grid2
-          item
-          xs={12}
-          md={6}
+          size={{ xs: 12, md: 6 }}
           display="flex"
           flexDirection="column"
           justifyContent="center"
@@ -81,6 +90,7 @@ export default function Home() {
               transform: "scale(1.03)",
             },
             width: isMobile ? "80%" : "auto",
+            // minHeight:'100px'
           }}
         >
           <PersonRoundedIcon
@@ -96,9 +106,7 @@ export default function Home() {
         </Grid2>
 
         <Grid2
-          item
-          xs={12}
-          md={6}
+          size={{ xs: 12, md: 6 }}
           display="flex"
           flexDirection="column"
           justifyContent="center"
@@ -119,6 +127,7 @@ export default function Home() {
               transform: "scale(1.03)",
             },
             width: isMobile ? "80%" : "auto",
+            // minHeight:'100px'
           }}
         >
           <AccountBalanceRoundedIcon

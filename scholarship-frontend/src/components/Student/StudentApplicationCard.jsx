@@ -34,17 +34,16 @@ const ApplicationCard = () => {
     fetchApplications();
   }, []);
 
-  // Function to get background color based on status
   const getStatusColor = (status) => {
     switch (status) {
       case "Accepted":
-        return "#4caf50"; // Green
+        return "#4caf50";
       case "Declined":
-        return "#f44336"; // Red
+        return "#f44336";
       case "Pending":
-        return "#ffa726"; // Orange
+        return "#ffa726";
       default:
-        return "#1976d2"; // Default Blue
+        return "#1976d2";
     }
   };
 
@@ -55,7 +54,10 @@ const ApplicationCard = () => {
       </Typography>
       <Grid2 container spacing={4} justifyContent="center">
         {applications.map((app) => (
-          <Grid2 item xs={12} sm={6} md={4} lg={3} key={app.application_id}>
+          <Grid2
+            size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+            key={app.application_id}
+          >
             <Card
               sx={{
                 borderRadius: 3,
@@ -73,7 +75,7 @@ const ApplicationCard = () => {
                 sx={{
                   padding: 2,
                   textAlign: "center",
-                  background: getStatusColor(app.status), // Set background color based on status
+                  background: getStatusColor(app.status),
                   color: "#ffffff",
                   borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
                 }}
@@ -99,13 +101,6 @@ const ApplicationCard = () => {
                 >
                   Application Date:{" "}
                   {new Date(app.application_date).toLocaleDateString()}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ marginBottom: 1 }}
-                >
-                  Deadline: {new Date(app.deadline).toLocaleDateString()}
                 </Typography>
                 <Typography
                   variant="body2"

@@ -41,7 +41,7 @@ const StudentNavbar = () => {
             <SchoolIcon sx={{ fontSize: "36px", marginRight: 1 }} />
           </IconButton>
           <Typography variant="h5" sx={{ color: "#fff", fontWeight: "bold" }}>
-            ePass
+            Gradious Scholarships
           </Typography>
         </Box>
 

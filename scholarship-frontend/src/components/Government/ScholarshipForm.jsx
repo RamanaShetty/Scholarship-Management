@@ -1,4 +1,3 @@
-// ScholarshipForm.js
 import React, { useState } from "react";
 import {
   Dialog,
@@ -8,7 +7,7 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom"; 
 
 const ScholarshipForm = ({ open, handleClose }) => {
   const [programName, setProgramName] = useState("");

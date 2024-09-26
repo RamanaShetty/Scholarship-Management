@@ -17,13 +17,13 @@ import {
 import { KeyboardBackspace } from "@mui/icons-material";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import StudentNav from "./StudentNav.jsx";
+import ApplicationRegistration from "./ApplicationRegistration.jsx";
 
 const ScholarshipDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [scholarship, setScholarship] = useState(null);
   const [open, setOpen] = useState(false);
-  const [document, setDocument] = useState(null);
 
   useEffect(() => {
     const fetchScholarships = async () => {
@@ -56,33 +56,6 @@ const ScholarshipDetail = () => {
   if (!scholarship) {
     return <Typography variant="h6">Scholarship not found.</Typography>;
   }
-
-  const handleApply = async () => {
-    const token = localStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("submittedDocument", document);
-    formData.append("scholarship_id", scholarship.scholarship_id);
-
-    try {
-      const response = await fetch("http://localhost:8080/api/std/v1/submit", {
-        method: "POST",
-        headers: {
-          Authorization: `${token}`,
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to apply for the scholarship");
-      }
-
-      alert("Application submitted successfully!");
-      setOpen(false);
-    } catch (error) {
-      console.error(error);
-      alert("Error submitting application.");
-    }
-  };
 
   return (
     <Box>
@@ -261,24 +234,11 @@ const ScholarshipDetail = () => {
       </Grid2>
 
       {/* Modal for document upload */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Upload Document</DialogTitle>
-        <DialogContent>
-          <TextField
-            type="file"
-            onChange={(e) => setDocument(e.target.files[0])}
-            fullWidth
-            sx={{ marginBottom: 2 }}
-            inputProps={{ accept: ".pdf,.doc,.docx" }} // Specify accepted file types
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleApply} disabled={!document}>
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ApplicationRegistration
+        open={open}
+        handleClose={() => setOpen(false)}
+        scholarship_id={scholarship.scholarship_id}
+      />
     </Box>
   );
 };

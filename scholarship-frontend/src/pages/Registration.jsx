@@ -15,13 +15,10 @@ const RegistrationForm = () => {
     name: "",
     email: "",
     password: "",
-    phone: "",
-    address: "",
+    confirmPassword: "",
     age: "",
-    GPA: "",
-    institute_name: "",
-    institute_code: "",
   });
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,10 +27,20 @@ const RegistrationForm = () => {
       ...formData,
       [name]: value,
     });
+
+    if (name === "password" || name === "confirmPassword") {
+      setPasswordError("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match!");
+      return;
+    }
+
     try {
       const response = await fetch(
         "http://localhost:8080/api/std/v1/registration",
@@ -52,7 +59,7 @@ const RegistrationForm = () => {
 
       const data = await response.json();
       console.log("Registration successful:", data);
-      navigate("/login");
+      navigate("/student");
     } catch (error) {
       console.error("Error during registration:", error);
     }
@@ -129,21 +136,15 @@ const RegistrationForm = () => {
           />
 
           <TextField
-            label="Phone"
-            name="phone"
-            value={formData.phone}
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            value={formData.confirmPassword}
             onChange={handleChange}
             required
             fullWidth
-          />
-
-          <TextField
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            fullWidth
+            error={Boolean(passwordError)}
+            helperText={passwordError}
           />
 
           <TextField
@@ -151,34 +152,6 @@ const RegistrationForm = () => {
             name="age"
             type="number"
             value={formData.age}
-            onChange={handleChange}
-            required
-            fullWidth
-          />
-
-          <TextField
-            label="GPA"
-            name="GPA"
-            type="number"
-            value={formData.GPA}
-            onChange={handleChange}
-            required
-            fullWidth
-          />
-
-          <TextField
-            label="Institute Name"
-            name="institute_name"
-            value={formData.institute_name}
-            onChange={handleChange}
-            required
-            fullWidth
-          />
-
-          <TextField
-            label="Institute Code"
-            name="institute_code"
-            value={formData.institute_code}
             onChange={handleChange}
             required
             fullWidth
