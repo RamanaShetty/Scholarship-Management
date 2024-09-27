@@ -3,14 +3,19 @@ import {
   Box,
   Card,
   CardContent,
+  CardActions,
+  Button,
   Typography,
-  Grid2,
+  Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ReadMoreIcon from "@mui/icons-material/ReadMore";
+import ContactPageIcon from "@mui/icons-material/ContactPage";
 
 const GovApplicationsCards = () => {
   const [applications, setApplications] = useState([]);
@@ -66,7 +71,6 @@ const GovApplicationsCards = () => {
         }
 
         const data = await response.json();
-        console.log(data);
         setApplications(data);
         setFilteredApplications(data); // Initialize filteredApplications
       } catch (err) {
@@ -77,7 +81,6 @@ const GovApplicationsCards = () => {
     fetchApplications();
   }, []);
 
-  // Handle filtering logic
   useEffect(() => {
     let filtered = applications;
 
@@ -161,7 +164,7 @@ const GovApplicationsCards = () => {
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>
-            ))}
+            ))}{" "}
           </Select>
         </FormControl>
 
@@ -178,7 +181,7 @@ const GovApplicationsCards = () => {
               <MenuItem key={status} value={status}>
                 {status}
               </MenuItem>
-            ))}
+            ))}{" "}
           </Select>
         </FormControl>
 
@@ -195,28 +198,24 @@ const GovApplicationsCards = () => {
               <MenuItem key={cast} value={cast}>
                 {cast}
               </MenuItem>
-            ))}
+            ))}{" "}
           </Select>
         </FormControl>
       </Box>
 
       {/* Application cards */}
-      <Grid2 container spacing={3}>
+      <Grid container spacing={3}>
         {filteredApplications.map((application) => (
-          <Grid2
-            size={{ xs: 12, sm: 6, md: 4 }}
-            key={application.application_id}
-          >
+          <Grid item xs={12} sm={6} md={4} key={application.application_id}>
             <Card
               onClick={() => handleCardClick(application)}
               sx={{
-                cursor: "pointer",
                 borderRadius: 3,
                 boxShadow: 3,
                 width: "100%",
                 height: "auto",
                 background:
-                  application.status === "accepted" ? "#eafaea" : "#fff5e6",
+                  application.status === "accepted" ? "#E0FBE2" : "#fff5e6",
                 border:
                   application.status === "accepted"
                     ? "3px solid green"
@@ -224,39 +223,73 @@ const GovApplicationsCards = () => {
               }}
             >
               <CardContent sx={{ p: 3 }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ fontSize: "1.5rem", mb: 2 }}
-                >
-                  {application.program_name}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textAlign: "left", fontSize: "1rem", mb: 1 }}
-                >
-                  <strong>Student Name:</strong> {application.student_name}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textAlign: "left", fontSize: "1rem", mb: 1 }}
-                >
-                  <strong>Institute:</strong> {application.institute_name}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textAlign: "left", fontSize: "1rem" }}
-                >
-                  <strong>Status:</strong> {application.status}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                  <ContactPageIcon sx={{ mr: 1 }} /> {/* Added the icon here */}
+                  <Typography variant="h6" sx={{ fontSize: "18px" }}>
+                    {application.program_name}
+                  </Typography>
+                </Box>
+                <Divider sx={{ mb: 1 }} />
+                {/* Student Name */}
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", color: "text.secondary", mr: 1 }}
+                  >
+                    Student:
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {application.student_name}
+                  </Typography>
+                </Box>
+
+                {/* Institute Name */}
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", color: "text.secondary", mr: 1 }}
+                  >
+                    Institute:
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {application.institute_name}
+                  </Typography>
+                </Box>
+
+                {/* Status */}
+                <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", color: "text.secondary", mr: 1 }}
+                  >
+                    Status:
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {application.status}
+                  </Typography>
+                </Box>
               </CardContent>
+              <CardActions>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    width: "100%",
+                  }}
+                >
+                  <Button
+                    size="small"
+                    startIcon={<ReadMoreIcon />}
+                    onClick={() => handleCardClick(application.application_id)}
+                  >
+                    View More
+                  </Button>
+                </Box>
+              </CardActions>
             </Card>
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };
