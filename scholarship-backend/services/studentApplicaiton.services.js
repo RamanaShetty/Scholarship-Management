@@ -237,8 +237,6 @@ exports.submitApplication = async (req, res, next) => {
     cgpa,
   } = req.body;
 
-  console.log(req.body);
-
   const application_date = new Date();
 
   const student_id = req.userId;

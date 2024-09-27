@@ -98,23 +98,4 @@ router.delete(
   stdApplication.deleteApplication
 );
 
-// router.post("/api/inst/v1/registration", registrations.instituteRegistration);
-// router.post("/api/inst/v1/login", login.instLogin);
-
-// router.get(
-//   "/api/inst/v1/application",
-//   tokenAuthentication,
-//   applicaitons.instApplication
-// );
-// router.put(
-//   "/api/inst/v1/approve",
-//   tokenAuthentication,
-//   applicaitons.instApprove
-// );
-// router.delete(
-//   "/api/inst/v1/decline",
-//   tokenAuthentication,
-//   applicaitons.instDecline
-// );
-
 module.exports = router;
