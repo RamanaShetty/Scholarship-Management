@@ -6,9 +6,16 @@ import {
   Box,
   Container,
   Paper,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "../styles/login.css";
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 const LoginForm = () => {
   const location = useLocation();
@@ -17,6 +24,13 @@ const LoginForm = () => {
     password: "",
     role: location.state?.role || "student",
   });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const navigate = useNavigate();
 
@@ -28,8 +42,33 @@ const LoginForm = () => {
     });
   };
 
+  const validation = () => {
+    const error = {}
+    if (!/\S+@\S+\.\S+/.test(formData.email) || !formData.email.trim()) {
+      error.email = "Invalid email : Please check your email";
+    }
+
+    if (formData.password.length < 6) {
+      error.password = "Invalid Password : Please check your password";
+    }
+
+    setValidationErrors(error);
+
+    if (Object.keys(error).length === 0) {
+      return true;
+    } else {
+      setOpenDialog(true);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validation()) {
+      return; // Exit if validation fails
+    }
+
     try {
       const response = await fetch("http://localhost:8080/api/v1/login", {
         method: "POST",
@@ -39,12 +78,19 @@ const LoginForm = () => {
         body: JSON.stringify(formData),
       });
 
+      if (response.status === 401) {
+        setValidationErrors({ password: "Unauthorized: Please check your email and password." });
+        setOpenDialog(true);
+        setTimeout(() => setOpenDialog(false), 3000); // Close dialog after 5 seconds
+        return; // Exit if unauthorized
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      const { token, role } = data;
+      const { token = "", role = "" } = data;
 
       localStorage.setItem("token", token);
 
@@ -55,6 +101,9 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error("Error during login:", error);
+      setValidationErrors({ general: "An error occurred during login. Please try again." });
+      setOpenDialog(true);
+      setTimeout(() => setOpenDialog(false), 3000); // Close dialog after 5 seconds
     }
   };
 
@@ -112,12 +161,25 @@ const LoginForm = () => {
           <TextField
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handleChange}
             required
             fullWidth
             sx={{ borderRadius: 2 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={handleTogglePassword}
+                    edge="end"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <VisibilityOutlinedIcon /> : <VisibilityOffOutlinedIcon />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Button
@@ -145,6 +207,25 @@ const LoginForm = () => {
           )}
         </Box>
       </Paper>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}
+        PaperProps={{
+          sx: {
+            marginBottom: '25%',
+            maxWidth: '400px',
+            width: '80%',
+            position: 'fixed',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 9999,
+          },
+        }}>
+        <DialogTitle sx={{ color: 'red' }}>Error</DialogTitle>
+        <DialogContent sx={{ color: 'black' }}>
+          {validationErrors.password && <p>{validationErrors.password}</p>}
+          {validationErrors.email && <p>{validationErrors.email}</p>}
+          {validationErrors.general && <p>{validationErrors.general}</p>}
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 };

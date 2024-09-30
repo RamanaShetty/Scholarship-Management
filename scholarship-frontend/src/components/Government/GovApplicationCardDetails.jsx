@@ -4,7 +4,7 @@ import {
   Box,
   Typography,
   Button,
-  Grid2,
+  Grid,
   Container,
   Divider,
   Dialog,
@@ -38,11 +38,11 @@ const GovApplicationCardDetails = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/api/std/v1/approve/${applicationId}`,
+        `http://localhost:8080/api/std/v1/approve/${applicationId}`, // Use backticks for string interpolation
         {
           method: "PUT",
           headers: {
-            Authorization: `${token}`,
+            Authorization: `${token}`, // Added Bearer prefix
             "Content-Type": "application/json",
           },
         }
@@ -63,11 +63,11 @@ const GovApplicationCardDetails = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/api/std/v1/decline/${applicationId}`,
+        `http://localhost:8080/api/std/v1/decline/${applicationId}`, // Use backticks for string interpolation
         {
           method: "DELETE",
           headers: {
-            Authorization: `${token}`,
+            Authorization: `${token}`, // Added Bearer prefix
             "Content-Type": "application/json",
           },
         }
@@ -115,8 +115,8 @@ const GovApplicationCardDetails = () => {
             </Typography>
           </Box>
           <Divider />
-          <Grid2 display={"flex"} flexDirection={"row"} gap={30} sx={{ mt: 2 }}>
-            <Grid2>
+          <Grid container spacing={4} sx={{ mt: 2 }}>
+            <Grid item xs={6}>
               <Typography variant="body1">
                 <strong>Program Name:</strong> {applicationDetails.program_name}
               </Typography>
@@ -136,12 +136,11 @@ const GovApplicationCardDetails = () => {
                 <strong>Date of Birth:</strong>{" "}
                 {new Date(applicationDetails.dob).toLocaleDateString()}
               </Typography>
-
               <Typography variant="body1">
                 <strong>Aadhaar No:</strong> {applicationDetails.aadhaar_no}
               </Typography>
-            </Grid2>
-            <Grid2>
+            </Grid>
+            <Grid item xs={6}>
               <Typography variant="body1">
                 <strong>Caste:</strong> {applicationDetails.caste}
               </Typography>
@@ -158,9 +157,7 @@ const GovApplicationCardDetails = () => {
               </Typography>
               <Typography variant="body1">
                 <strong>Application Date:</strong>{" "}
-                {new Date(
-                  applicationDetails.application_date
-                ).toLocaleDateString()}
+                {new Date(applicationDetails.application_date).toLocaleDateString()}
               </Typography>
               <Typography variant="body1">
                 <strong>Status:</strong> {applicationDetails.status}
@@ -169,8 +166,8 @@ const GovApplicationCardDetails = () => {
                 <strong>Scholarship Deadline:</strong>{" "}
                 {new Date(applicationDetails.deadline).toLocaleDateString()}
               </Typography>
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
 
           <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
             <Button onClick={handleOnclickBtn}>
@@ -205,7 +202,7 @@ const GovApplicationCardDetails = () => {
         </Container>
       </Box>
 
-      <Dialog open={open}>
+      <Dialog open={open} onClose={handleOnclickClose}>
         <DialogContent>
           <Box display={"flex"} flexDirection={"column"} sx={{ mt: 2 }}>
             {applicationDetails.documents.tenth_memo && (

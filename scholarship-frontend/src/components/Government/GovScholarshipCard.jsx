@@ -8,13 +8,10 @@ import {
   Button,
   Box,
   Pagination,
+  Snackbar, // Add Snackbar
+  Alert, // Add Alert for styled snackbar message
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import ScholarshipForm from "./ScholarshipForm";
 import EditScholarshipForm from "./EditScholarship";
 
@@ -33,6 +30,10 @@ const GovScholarshipCards = () => {
     deadline: "",
     required_documents: "",
   });
+  const [error, setError] = useState(""); 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // You can switch between 'success' or 'error'
 
   const totalPages = Math.ceil(scholarships.length / ScholarshipsPerPage);
 
@@ -61,18 +62,34 @@ const GovScholarshipCards = () => {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch scholarships");
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to fetch scholarships");
         }
 
         const data = await response.json();
         setScholarships(data);
       } catch (err) {
-        console.log(err);
+        setError(err.message); 
+        console.error(err);
       }
     };
 
     fetchScholarships();
   }, []);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+  
+
+  const showSnackbar = (message, severity = "success") => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true); // Open the snackbar with message and severity
+  };
 
   const handleDelete = async (scholarshipId) => {
     try {
@@ -89,7 +106,8 @@ const GovScholarshipCards = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete scholarship");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete scholarship");
       }
 
       setScholarships((prevScholarships) =>
@@ -97,13 +115,18 @@ const GovScholarshipCards = () => {
           (scholarship) => scholarship.scholarship_id !== scholarshipId
         )
       );
+
+      showSnackbar("Scholarship deleted successfully"); // Show success snackbar
     } catch (err) {
-      console.log(err);
+      setError(err.message);
+      showSnackbar("Failed to delete scholarship", "error"); // Show error snackbar
     }
   };
 
   return (
     <Box sx={{ padding: 2 }}>
+      {error && <Typography color="error">{error}</Typography>} 
+      
       <Box
         sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}
       >
@@ -260,6 +283,22 @@ const GovScholarshipCards = () => {
         handleEditClose={() => setOpenEditModal(false)}
         data={editScholarship}
       />
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000} // Auto-hide after 4 seconds
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Centered at the top
+      >
+        <Alert
+          severity={snackbarSeverity} // success or error
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+
     </Box>
   );
 };
