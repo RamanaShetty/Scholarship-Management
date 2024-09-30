@@ -11,6 +11,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -34,6 +36,11 @@ const ApplicationRegistration = ({ open, handleClose, scholarship_id }) => {
     cgpa: "",
   });
 
+  const [validationErrors, setValidationErrors] = useState({});
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
   const [documents, setDocuments] = useState({
     tenthMemo: null,
     twelthMemo: null,
@@ -42,15 +49,134 @@ const ApplicationRegistration = ({ open, handleClose, scholarship_id }) => {
     bonafide: null,
   });
 
+
+
   const navigate = useNavigate();
 
-  const handleNext = () =>
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
 
-  const handleBack = () =>
+  const validation = () => {
+
+    const errors = {};
+
+    if (activeStep == 0) {
+      if (!studentDetails.fullName.trim()) {
+        console.log("full name is required");
+        errors.fullName = "full name is required";
+      }
+      if (!studentDetails.fatherName.trim()) {
+        console.log('father name is required');
+        errors.fatherName = "father name is required";
+      }
+
+      if (!studentDetails.email.trim()) {
+        console.log('email is required');
+        errors.email = "email is required";
+      }
+      else if (!/\S+@\S+\.\S+/.test(studentDetails.email)) {
+        console.log('invalid email');
+        errors.email = 'invalid email';
+      }
+
+      if (!studentDetails.phone.trim()) {
+        console.log('Phone is required');
+        errors.phone = "phone is required";
+      }
+      else if (!/^\d{10}$/.test(studentDetails.phone)) {
+        console.log('invalid phone number');
+        errors.email = 'invalid phone number';
+      }
+
+      if (!studentDetails.dob.trim()) {
+        console.log('Date of birth is required');
+        errors.dob = "Date of birth is required";
+      }
+
+      if (!studentDetails.aadhaarNo.trim()) {
+        console.log('AadhaarNo is required');
+        errors.aadhaarNo = "AadhaarNo is required";
+      } else if (!/^\d{12}$/.test(studentDetails.aadhaarNo)) {
+        console.log('Aadhaar Number must be 12 digits');
+        errors.aadhaarNo = "Aadhaar Number must be 12 digits";
+      }
+
+      if (!studentDetails.caste.trim()) {
+        console.log('AadhaarNo is required');
+        errors.caste = "AadhaarNo is required";
+      }
+
+    }
+
+    else if (activeStep === 1) {
+      // Academic Details Validation
+      if (!academicDetails.instituteName.trim()) {
+        errors.instituteName = "Institute Name is required";
+      }
+
+      if (!academicDetails.instituteCode.trim()) {
+        errors.instituteCode = "Institute Code is required";
+      }
+
+      if (!academicDetails.cgpa.trim()) {
+        errors.cgpa = "CGPA is required";
+      } else if (isNaN(academicDetails.cgpa) || academicDetails.cgpa < 0) {
+        errors.cgpa = "CGPA must be a positive number";
+      }
+    }
+
+    else if (activeStep === 2) {
+      // Documents Validation
+      if (!documents.tenthMemo) {
+        errors.tenthMemo = "10th Memo is required";
+      }
+
+      if (!documents.twelthMemo) {
+        errors.twelthMemo = "12th Memo is required";
+      }
+
+      if (!documents.incomeCertificate) {
+        errors.incomeCertificate = "Income Certificate is required";
+      }
+
+      if (!documents.casteCertificate) {
+        errors.casteCertificate = "Caste Certificate is required";
+      }
+
+      if (!documents.bonafide) {
+        errors.bonafide = "Bonafide Certificate is required";
+      }
+    }
+
+    setValidationErrors(errors);
+
+    // Return true if no errors
+    if (Object.keys(errors).length === 0) {
+      return true;
+    } else {
+      // Show Snackbar with error message
+      setSnackbarSeverity("error");
+      setSnackbarMessage("please check and fill your details");
+      setSnackbarOpen(true);
+      return false;
+    }
+  }
+
+  const handleNext = () => {
+    if (validation()) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  }
+
+  const handleBack = () => {
+    setValidationErrors({});
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  }
 
   const handleApply = async () => {
+
+    if (!validation()) return; 
     const token = localStorage.getItem("token");
     const formData = new FormData();
 
@@ -76,11 +202,19 @@ const ApplicationRegistration = ({ open, handleClose, scholarship_id }) => {
       if (!response.ok) {
         throw new Error("Failed to apply for the scholarship");
       }
-      alert("Application submitted successfully!");
+      setSnackbarSeverity("success");
+    setSnackbarMessage("Application submitted successfully!");
+    setSnackbarOpen(true);
+    
+    // Redirect after a short delay (optional)
+    setTimeout(() => {
       navigate("/student");
+    }, 2000);
     } catch (error) {
       console.error(error);
-      alert("Error submitting application.");
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Error submitting application.");
+      setSnackbarOpen(true);
     }
   };
 
@@ -380,6 +514,19 @@ const ApplicationRegistration = ({ open, handleClose, scholarship_id }) => {
           </Button>
         )}
       </DialogActions>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{
+          vertical: 'top', // or 'top'
+          horizontal: 'center', // or 'left', 'right'
+        }}
+        onClose={handleSnackbarClose}
+      >
+        <Alert  severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 };

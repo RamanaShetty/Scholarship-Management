@@ -9,6 +9,7 @@ import StudentGovApplications from "./pages/Government/Applications.jsx";
 import StudentGovApplicationDetail from "./components/Government/GovApplicationCardDetails.jsx";
 import Home from "./pages/Home.jsx";
 
+
 function App() {
   return (
     <Router>

@@ -40,6 +40,7 @@ const GovApplicationsCards = () => {
     "Green Future Scholarship",
     "Innovation in Technology Scholarship",
   ];
+
   const instituteNames = [
     "CMR College of Engineering and Technology",
     "CMR Engineering College",
@@ -48,6 +49,7 @@ const GovApplicationsCards = () => {
     "Chaitanya Bharati Institute of Technology",
     "Keshav Memorial Institute of Technology",
   ];
+
   const statuses = ["accepted", "pending"];
   const castes = ["General", "OBC", "SC", "ST"];
 
@@ -60,7 +62,7 @@ const GovApplicationsCards = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `${token}`,
+              Authorization: `${token}`, // Corrected here
               "Content-Type": "application/json",
             },
           }
@@ -114,7 +116,7 @@ const GovApplicationsCards = () => {
   ]);
 
   const handleCardClick = (application) => {
-    navigate(`/gov/applications/${application.application_id}`, {
+    navigate(`/gov/applications/${application.application_id}`, { // Corrected here
       state: { application },
     });
   };
@@ -164,7 +166,7 @@ const GovApplicationsCards = () => {
               <MenuItem key={name} value={name}>
                 {name}
               </MenuItem>
-            ))}{" "}
+            ))}
           </Select>
         </FormControl>
 
@@ -181,7 +183,7 @@ const GovApplicationsCards = () => {
               <MenuItem key={status} value={status}>
                 {status}
               </MenuItem>
-            ))}{" "}
+            ))}
           </Select>
         </FormControl>
 
@@ -198,7 +200,7 @@ const GovApplicationsCards = () => {
               <MenuItem key={cast} value={cast}>
                 {cast}
               </MenuItem>
-            ))}{" "}
+            ))}
           </Select>
         </FormControl>
       </Box>
@@ -224,7 +226,7 @@ const GovApplicationsCards = () => {
             >
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                  <ContactPageIcon sx={{ mr: 1 }} /> {/* Added the icon here */}
+                  <ContactPageIcon sx={{ mr: 1 }} />
                   <Typography variant="h6" sx={{ fontSize: "18px" }}>
                     {application.program_name}
                   </Typography>
@@ -273,16 +275,13 @@ const GovApplicationsCards = () => {
                 <Box
                   sx={{
                     display: "flex",
-                    justifyContent: "flex-end",
+                    justifyContent: "space-between",
                     width: "100%",
                   }}
                 >
-                  <Button
-                    size="small"
-                    startIcon={<ReadMoreIcon />}
-                    onClick={() => handleCardClick(application.application_id)}
-                  >
-                    View More
+                  <Button size="small" color="primary">
+                    View
+                    <ReadMoreIcon sx={{ ml: 1 }} />
                   </Button>
                 </Box>
               </CardActions>
