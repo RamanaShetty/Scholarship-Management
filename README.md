@@ -146,3 +146,7 @@ There are two user roles in the Scholarship Management system:
 - **Frontend:** ReactJS, Material-UI (MUI)
 - **Backend:** NodeJS, ExpressJS
 - **Database:** MySQL
+
+## Licence
+
+This updated `README.md` now includes the enhanced **Usage** and **Technologies** sections. Let me know if you need any more adjustments!
