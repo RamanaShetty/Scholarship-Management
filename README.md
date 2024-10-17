@@ -111,6 +111,8 @@ CREATE TABLE ApplicationDocuments (
 
 ## Sample Data
 
+This is the sample data to insert into scholarships table.
+
 ```
 INSERT INTO Scholarships (date_of_addition, program_name, description, eligibility, benefits, deadline, required_documents)
 VALUES
