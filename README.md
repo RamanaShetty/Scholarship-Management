@@ -28,6 +28,12 @@ Scholarship Management is a system designed to manage scholarships, applications
    MAIL_PASS=
    ```
 
+   To generate a random JWT_SECRET key you can use the following command in the bash/terminal.
+
+   ```
+   openssl rand -base64 32
+   ```
+
 4. Run the server with:
    ```bash
    npm run start
